@@ -78,3 +78,6 @@ VALUES (1000, 'textuser1','Male',25,'csc350@bmcc.com','2122222322','123 main st'
 -- Insert initial data into schedule
 INSERT INTO schedule(organizer_id, activities, event_date, event_time, distance, comment)
 VALUES (1000, 'run', '2024-11-01', '09:30:00', 10, 'Run 10 miles in the morning in Dec 1st 2024.');
+
+INSERT INTO workout(exercise_type, workout_date, workout_time)
+VALUES ('run', '2024-11-20', '06:00:00');

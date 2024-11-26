@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find-A-Buddy</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 font-sans text-gray-800">
+    <!--  Nav Bar -->
+    <nav class="bg-white shadow-md fixed w-full z-10">
+        <!-- 
+        bg-white: Sets the background color to white.
+        shadow-md: Adds a medium-sized shadow effect to the navbar.
+        fixed: Makes the navbar stay fixed at the top of the page while scrolling.
+        w-full: Makes the navbar span the entire width of the viewport.
+        z-10: Sets a z-index of 10 to ensure the navbar appears above other elements.
+        -->
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <!-- 
+            container: Centers the content horizontally and sets a max-width based on the screen size.
+            mx-auto: Adds horizontal auto margin to center the container.
+            px-4: Adds padding of 1rem (16px) on the left and right.
+            py-4: Adds padding of 1rem (16px) on the top and bottom.
+            flex: Uses Flexbox for layout, allowing items to align and distribute efficiently.
+            justify-between: Distributes child items with space between them (logo on the left, menu on the right).
+            items-center: Vertically aligns Flexbox items to the center of their container.
+            -->
+            <h1 class="text-2xl font-bold text-blue-800">Find-A-Buddy</h1>
+            <!-- 
+            text-2xl: Sets the font size to extra-large.
+            font-bold: Makes the text bold.
+            text-blue-800: Sets the text color to a dark shade of blue.
+            -->
+            <ul class="flex space-x-8">
+                <!-- 
+                flex: Uses Flexbox for the layout of the list items.
+                space-x-8: Adds horizontal spacing of 2rem (32px) between each list item.
+                -->
+                <li><a href="#" class="text-gray-800 hover:text-blue-500">Dashboard</a></li>
+                <!-- 
+                text-gray-800: Sets the text color to dark gray.
+                hover:text-blue-500: Changes the text color to a lighter blue when hovered.
+                -->
+                <li><a href="#" class="text-gray-800 hover:text-blue-500">Find-A-Buddy</a></li>
+                <li><a href="#" class="text-gray-800 hover:text-blue-500">Messages</a></li>
+                <li><a href="#" class="text-gray-800 hover:text-blue-500">My Schedule</a></li>
+                <li><a href="#" class="text-gray-800 hover:text-blue-500">Profile</a></li>
+                <li><button class="text-red-500 hover:text-red-700">Logout</button></li>
+                <!-- 
+                text-red-500: Sets the text color to red.
+                hover:text-red-700: Changes the text color to a darker red when hovered.
+                -->
+            </ul>
+        </div>
+    </nav>    
+
+    <!-- Main Layout what keeps the layout intact -->
+    <div class="flex pt-20 container mx-auto px-4 space-x-4">
+        <!-- Left Sidebar -->
+        <div class="w-1/4 bg-white p-4 rounded-lg shadow-md">
+            <div class="text-center">
+                <img class="w-24 h-24 mx-auto rounded-full border-4 border-gray-300" src="https://photo.com/150" alt="User Profile Picture">
+                <h2 class="text-xl font-semibold mt-4">Jonathan Grande</h2>
+                <p class="text-gray-600">Queens, NY</p>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="w-1/2 bg-white p-4 rounded-lg shadow-md space-y-6">
+            <!--Schedule Section -->
+            <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+                <h2 class="text-lg font-bold text-blue-800 mb-4">My Schedule</h2>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">Monday - Run with Michael</span>
+                        <span class="bg-gray-200 text-blue-800 px-3 py-1 rounded-full">6 miles</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">Tuesday - Biking with Daniela</span>
+                        <span class="bg-gray-200 text-blue-800 px-3 py-1 rounded-full">10 miles</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">Wednesday - Walk with Rachel</span>
+                        <span class="bg-gray-200 text-blue-800 px-3 py-1 rounded-full">2 miles</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="w-1/4 space-y-4">
+            <!-- Find A Buddy Section -->
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <h3 class="text-lg font-bold text-gray-800">Find a Buddy!</h3>
+                <p class="text-gray-600 mt-2">Find a buddy to exercise with!</p>
+                <a href="#" class="mt-2 block bg-blue-500 text-white text-center py-2 rounded-lg hover:bg-blue-600">Find Your Buddy</a>
+            </div>
+
+            <!-- Clubs Section, low priority just threw it in there to fill in space -->
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <h3 class="text-lg font-bold text-gray-800">Your Clubs</h3>
+                <div class="mt-4 flex space-x-4">
+                    <img class="w-10 h-10 rounded-md" src="https://via.placeholder.com/40" alt="Club 1">
+                    <img class="w-10 h-10 rounded-md" src="https://via.placeholder.com/40" alt="Club 2">
+                    <img class="w-10 h-10 rounded-md" src="https://via.placeholder.com/40" alt="Club 3">
+                </div>
+                <a href="#" class="mt-4 block text-blue-500 text-sm hover:underline">View All Clubs</a>
+            </div>
+
+            <!-- Suggested Friends Section Also Low Priority -->
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <h3 class="text-lg font-bold text-gray-800">Suggested Matches</h3>
+                <div class="mt-4">
+                    <div class="flex items-center space-x-4">
+                        <img class="w-10 h-10 rounded-full" src="https://via.placeholder.com/40" alt="Friend 1">
+                        <div>
+                            <p class="font-semibold">Bert Moreno</p>
+                            <button class="text-blue-500 text-sm hover:underline">Message</button>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4 mt-4">
+                        <img class="w-10 h-10 rounded-full" src="https://via.placeholder.com/40" alt="Friend 2">
+                        <div>
+                            <p class="font-semibold">Minru H</p>
+                            <button class="text-blue-500 text-sm hover:underline">Message</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</body>
+
+</html>

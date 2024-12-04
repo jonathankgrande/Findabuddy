@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS user_admin;
 CREATE TABLE user_admin (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
-    passcode VARCHAR(50) NOT NULL,
+    passcode VARCHAR(2000) NOT NULL,
     first_name VARCHAR(50),
     last_name VARCHAR(50)
 );

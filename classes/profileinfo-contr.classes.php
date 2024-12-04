@@ -27,17 +27,39 @@ class ProfileInfoContr extends ProfileInfo {
     // Function to set and display default profile information.
     public function defaultProfileInfo() {
         // Generate personalized profile information.
-        $altAbout = "Let’s get to know each other! Tell us a little about yourself: What are your interests, hobbies, or something unique about you? We’d love to hear your story!";
-        $altTitle = "Hi! I am " . $this->altId;
-        $altText = "Welcome, everyone! We're thrilled to have you here as part of this amazing community. Whether you're here to share ideas, learn new things, or just connect with others, we're excited to grow together!";
+        $profileAbout = "Lets get to know each other! Tell us a little about yourself: What are your interests, hobbies, or something unique about you? We would love to hear your story!";
+        $profileTitle = "Hi! I am " . $this->userId;
+        $profileText = "Welcome, everyone! We're thrilled to have you here as part of this amazing community. Whether you're here to share ideas, learn new things, or just connect with others, we're excited to grow together!";
         
-        $nickname = "Nickname: " . $this->nickname;
-        $gender = "Gender: " . $this->gender;
-        $age = "Age: " . $this->age;
-        $phoneNumber = "Phone Number: " . $this->phoneNumber;
-        $userAddy = "Borough: " . $this->address; //For location we can use boroughs
+        $profileNickname = "Nickname: " . $this->nickname;
+        $profileGender = "Gender: " . $this->gender;
+        $profileAge = "Age: " . $this->age;
+        $profileNumber = "Phone Number: " . $this->phoneNumber;
+        $profileAddy = "Borough: " . $this->address; //For location we can use boroughs
 
         // Set or display profile information (assuming setProfileInfo is a method in the parent class).
-        $this->setProfileInfo($altAbout, $altTitle, $altText, $nickname, $gender, $age, $phoneNumber, $userAddy, $this->userId);
+        $this->setProfileInfo($profileAbout, $profileTitle, $profileText, $profileNickname, $profileGender, $profileAge, $profileNumber, $profileAddress, $this->userId);
     }
-}
+
+    public function updateProfileInfo($about, $introTitle, $introText, $nickName, $gender, $age, $email, $phoneNumber, $userAddress ){
+        //error handlers
+        if($this->emptyInputCheck($about, $introTitle, $introText, $nickName, $gender, $age, $email, $phoneNumber, $userAddress) == true){
+            header("loction: ../profile.php?error=stmtfailed");
+            exit();
+        }
+        //UPDATE PROFILE INFO
+        $this->setNewProfileInfo($about, $introTitle, $introText, $nickName, $gender, $age, $email, $phoneNumber, $userAddy,  $userid);
+
+    }
+
+    private function emptyInputCheck($about, $introTitle, $introText, $nickName, $gender, $age, $email, $phoneNumber, $userAddress){
+        $result;
+        if(empty($about) || empty($introtitle) || empty($introtext) || empty($nickname) || empty($gender) || empty($age) || empty($email) || empty($phoneNumber) || empty($userAddress)){
+            $result = true;
+        }
+        else {
+            $result = false;
+        }
+        return $result;
+        }
+    }

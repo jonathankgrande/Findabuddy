@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find-A-Buddy</title>
+    <title>Homepage</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
@@ -17,9 +17,18 @@ $pageHeader = "Homepage";
             echo "<p> Error: File not found. </p>";
         }
 ?>    
-
+    <div class="container mx-auto pt-10">
+        <!-- Welcome Section -->
+        <div class="bg-blue-100 border-l-4 border-blue-500 p-4 rounded-md mb-6">
+            <h2 class="text-blue-700 font-bold text-lg">Welcome to Your Homepage!</h2>
+            <p class="text-gray-700">
+                This is your personal space to manage your fitness journey and connections. 
+                From planning your schedule to finding new workout buddies, everything you need is just a click away.
+                Explore your clubs, suggested matches, and activities to stay motivated and connected!
+            </p>
+    </div>
     <!-- Main Layout what keeps the layout intact -->
-    <div class="flex pt-20 container mx-auto px-4 space-x-4">
+    <div class="flex pt-30 container mx-auto px-4 space-x-4">
         <!-- Left Sidebar -->
         <div class="w-1/4 bg-white p-4 rounded-lg shadow-md">
             <div class="text-center">
@@ -57,7 +66,7 @@ $pageHeader = "Homepage";
             <div class="bg-white p-4 rounded-lg shadow-md">
                 <h3 class="text-lg font-bold text-gray-800">Find a Buddy!</h3>
                 <p class="text-gray-600 mt-2">Find a buddy to exercise with!</p>
-                <a href="#" class="mt-2 block bg-blue-500 text-white text-center py-2 rounded-lg hover:bg-blue-600">Find Your Buddy</a>
+                <a href="find_a_buddy.php" class="mt-2 block bg-blue-500 text-white text-center py-2 rounded-lg hover:bg-blue-600">Find Your Buddy</a>
             </div>
 
             <!-- Clubs Section, low priority just threw it in there to fill in space -->

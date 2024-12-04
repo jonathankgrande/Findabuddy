@@ -43,7 +43,6 @@ function generateDefaultProfileImage($firstName, $lastName, $userName) {
     $initials = strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
     $bgColor = sprintf("#%06X", mt_rand(0, 0xFFFFFF));
 
-    // Create image
     $image = imagecreate(200, 200);
     $backgroundColor = sscanf($bgColor, "#%02x%02x%02x");
     $bgColor = imagecolorallocate($image, $backgroundColor[0], $backgroundColor[1], $backgroundColor[2]);
@@ -52,13 +51,11 @@ function generateDefaultProfileImage($firstName, $lastName, $userName) {
     $textWidth = imagefontwidth($fontSize) * strlen($initials);
     $textHeight = imagefontheight($fontSize);
 
-    // Center the text
     $x = (imagesx($image) - $textWidth) / 2;
     $y = (imagesy($image) - $textHeight) / 2;
 
     imagestring($image, $fontSize, $x, $y, $initials, $textColor);
 
-    // Save image
     $profileImage = "uploads/" . $userName . "_default.png";
     imagepng($image, $profileImage);
     imagedestroy($image);
@@ -98,12 +95,13 @@ try {
 
         saveUserToDatabase($pdo, $firstName, $lastName, $userName, $passwordHash);
 
-        echo "<h2>Profile Created</h2>";
-        echo "<p>Name: $firstName $lastName</p>";
-        echo "<p>Username: $userName</p>";
-        echo "<img src='$profileImage' alt='Profile Image' width='200'>";
+        // Redirect to profile.php
+        session_start();
+        $_SESSION['userId'] = $userName; // Store user ID in session
+        header("Location: frontend/profile.php");
+        exit();
     }
 } catch (Exception $e) {
-    die($e->getMessage());
+    echo "<p>Error: " . $e->getMessage() . "</p>";
 }
 ?>

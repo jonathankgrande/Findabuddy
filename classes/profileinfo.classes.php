@@ -1,56 +1,61 @@
 <?php
 
 class ProfileInfo extends Dbh {
-    protected function getProfileInfo($userid){
-        $stmt = $this->connect()->prepare('SELECT * FROM athletes WHERE users_id = ?;');
 
-        if($stmt->execute(array($userId))){
-            $stmt = null;
-            header("loction: profile.php?error=stmtfailed");
-            exit();
-            /*avoids nested statements*/ 
-            }
-        if($stmt>rowCount() == 0){
-            $stmt = null;
-            header("loction: profile.php?error=profilenotfound");
-            exit();
-            }
-             
-            $profileData = $stmt->fetchAll(PDO::FETCH_ASSOC);  /* when i grab the data from the database i actually have to use it inside my code and reference to the data i want to be able to refernece to the data based on the column names inside the database so if i want to get userid then i just write user_id and i will get that particular piece of data*/
+    // Retrieve profile information for a user
+    protected function getProfileInfo($userId) {
+        try {
+            $stmt = $this->connect()->prepare('SELECT * FROM athletes WHERE users_id = ?;');
+            $stmt->execute([$userId]);
 
-            return $profileData;
+            if ($stmt->rowCount() === 0) {
+                throw new Exception("Profile not found.");
+            }
+
+            return $stmt->fetch(PDO::FETCH_ASSOC); // Fetch a single row instead of all rows
+        } catch (Exception $e) {
+            error_log($e->getMessage()); // Log error for debugging
+            return null; // Return null in case of error
         }
     }
 
-class ProfileInfo extends Dbh {
-    protected function setNewProfileInfo($altAbout, $altTitle, $altText, $nickName, $gender, $age, $phoneNumber, $userAddy,  $userid){
-        $stmt = $this->connect()->prepare('UPDATE athletes SET alt_about = ?, alt_introtitle = ?, alt_introtext = ?, nick_name = ?, gender = ?, age = ?, phone_number = ?, user_address = ?  WHERE users_id =?;');
+    // Update profile information for a user
+    protected function setNewProfileInfo($altAbout, $altTitle, $altText, $nickName, $gender, $age, $email, $phoneNumber, $userAddy, $userId) {
+        try {
+            $stmt = $this->connect()->prepare(
+                'UPDATE athletes SET 
+                    alt_about = ?, 
+                    alt_introtitle = ?, 
+                    alt_introtext = ?, 
+                    nick_name = ?, 
+                    gender = ?, 
+                    age = ?, 
+                    email = ?, 
+                    phone_number = ?, 
+                    user_address = ? 
+                WHERE users_id = ?;'
+            );
 
-        if($stmt->execute(array($altAbout, $altTitle, $altText, $nickName, $gender, $age, $phoneNumber, $userAddy,  $userid))){
-            $stmt = null;
-            header("loction: profile.php?error=stmtfailed");
-            exit();
-            /*avoids nested statements*/ 
-            }
-
-            $stmt = null;
-       
+            return $stmt->execute([$altAbout, $altTitle, $altText, $nickName, $gender, $age, $email, $phoneNumber, $userAddy, $userId]);
+        } catch (Exception $e) {
+            error_log($e->getMessage()); // Log error for debugging
+            return false; // Return false in case of error
         }
+    }
 
-        protected function setProfileInfo($altAbout, $altTitle, $altText, $nickName, $gender, $age, $phoneNumber, $userAddy,  $userid){ 
-            $stmt = $this->connect()->prepare('INSERT INTO athletes (alt_about, alt_introtitle, alt_introtext, nick_name, gender, age, phone_number, user_address) VALUES (?,?,?,?,?,?,?,?;');
-    
-            if($stmt->execute(array($altAbout, $altTitle, $altText, $nickName, $gender, $age, $phoneNumber, $userAddy,  $userid))){
-                $stmt = null;
-                header("loction: profile.php?error=stmtfailed");
-                exit();
-                /*avoids nested statements*/ 
-                }
-    
-                $stmt = null;
-           
-            }
+    // Insert new profile information
+    protected function setProfileInfo($altAbout, $altTitle, $altText, $nickName, $gender, $age, $email, $phoneNumber, $userAddy, $userId) {
+        try {
+            $stmt = $this->connect()->prepare(
+                'INSERT INTO athletes 
+                    (alt_about, alt_introtitle, alt_introtext, nick_name, gender, age, email, phone_number, user_address, users_id) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
+            );
 
-
+            return $stmt->execute([$altAbout, $altTitle, $altText, $nickName, $gender, $age, $email, $phoneNumber, $userAddy, $userId]);
+        } catch (Exception $e) {
+            error_log($e->getMessage()); // Log error for debugging
+            return false; // Return false in case of error
+        }
+    }
 }
-

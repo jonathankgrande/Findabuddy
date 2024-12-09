@@ -7,8 +7,18 @@
     <title>Homepage</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-
+<body>
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Ensure the user is logged in
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
+    header('Location: login.php'); // Redirect to login if not logged in
+    exit;
+}
+
 $pageHeader = "Homepage";
 
     if (file_exists('../includes/navbar.php')){
@@ -16,7 +26,8 @@ $pageHeader = "Homepage";
         } else {
             echo "<p> Error: File not found. </p>";
         }
-?>    
+?>
+    
     <div class="container mx-auto pt-10">
         <!-- Welcome Section -->
         <div class="bg-blue-100 border-l-4 border-blue-500 p-4 rounded-md mb-6">
@@ -33,7 +44,8 @@ $pageHeader = "Homepage";
         <div class="w-1/4 bg-white p-4 rounded-lg shadow-md">
             <div class="text-center">
                 <img class="w-24 h-24 mx-auto rounded-full border-4 border-gray-300" src="https://photo.com/150" alt="User Profile Picture">
-                <h2 class="text-xl font-semibold mt-4">Jonathan Grande</h2>
+                
+                <h2 class="text-xl font-semibold mt-4"><?php echo htmlspecialchars($_SESSION['username']); ?></h2>
                 <p class="text-gray-600">Queens, NY</p>
             </div>
         </div>

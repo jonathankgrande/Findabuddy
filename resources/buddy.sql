@@ -46,10 +46,10 @@ ALTER TABLE schedule AUTO_INCREMENT = 5000;
 
 CREATE TABLE workout (
     workout_id INT AUTO_INCREMENT PRIMARY KEY,
-    exercise_type VARCHAR(50) NOT NULL,
     workout_date ENUM('Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su') NOT NULL,
-    workout_time TIME,
-    FOREIGN KEY (exercise_type) REFERENCES schedule(activities)
+    workout_time TIME NOT NULL,
+    activity ENUM('Run', 'Walk', 'Bike') NOT NULL
+    FOREIGN KEY (activity ENUM) REFERENCES schedule(activities)
 );
 
 CREATE TABLE msg (

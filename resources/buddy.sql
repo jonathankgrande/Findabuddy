@@ -60,3 +60,4 @@ CREATE TABLE messages (
     FOREIGN KEY (sender_id) REFERENCES user_admin(user_id),
     FOREIGN KEY (receiver_id) REFERENCES user_admin(user_id)
 );
+

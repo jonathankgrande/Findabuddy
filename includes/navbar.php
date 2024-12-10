@@ -1,3 +1,9 @@
+<?php
+// Start the session to access session variables
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +24,15 @@
                 <li><a href="messages.php" class="text-gray-800 hover:text-blue-500">Messages</a></li>
                 <li><a href="my_schedule.php" class="text-gray-800 hover:text-blue-500">My Schedule</a></li>
                 <li><a href="profile.php" class="text-gray-800 hover:text-blue-500">Profile</a></li>
-                <li><button class="text-red-500 hover:text-red-700">Logout</button></li>
+                <!-- Display the username if logged in -->
+                <?php if (isset($_SESSION['username'])): ?>
+                    <li class="text-blue-800">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></li>
+                    <li><a href="../backend/logout.php" class="text-red-500 hover:text-red-700">Logout</a></li>
+                <?php else: ?>
+                    <li><a href="../frontend/login.php" class="text-blue-500 hover:text-blue-700">Login</a></li>
+                <?php endif; ?>
             </ul>
         </div>
     </nav>   
+</body>
+</html>

@@ -49,15 +49,15 @@ CREATE TABLE workout (
     workout_date ENUM('Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su') NOT NULL,
     workout_time TIME NOT NULL,
     activity ENUM('Run', 'Walk', 'Bike') NOT NULL
-    FOREIGN KEY (activity ENUM) REFERENCES schedule(activities)
 );
 
-CREATE TABLE msg (
-    msg_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT NOT NULL,
-    recipient_id INT NOT NULL,
-    msg_datetime DATETIME,
-    msg_content TEXT,
-    FOREIGN KEY (sender_id) REFERENCES athletes(alt_id),
-    FOREIGN KEY (recipient_id) REFERENCES athletes(alt_id)
+    receiver_id INT NOT NULL,
+    content TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES user_admin(user_id),
+    FOREIGN KEY (receiver_id) REFERENCES user_admin(user_id)
 );
+

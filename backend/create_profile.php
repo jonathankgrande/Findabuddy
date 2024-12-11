@@ -21,10 +21,6 @@ function validatePasswords($password, $confirmPassword) {
     }
 }
 
-function hashPassword($password) {
-    return password_hash($password, PASSWORD_DEFAULT);
-}
-
 function handleProfileImage($firstName, $lastName, $userName) {
     if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
         $uploadDir = 'uploads/';
@@ -63,13 +59,13 @@ function generateDefaultProfileImage($firstName, $lastName, $userName) {
     return $profileImage;
 }
 
-function saveUserToDatabase($pdo, $firstName, $lastName, $userName, $passwordHash) {
+function saveUserToDatabase($pdo, $firstName, $lastName, $userName, $password) {
     try {
         $stmt = $pdo->prepare("INSERT INTO user_admin (username, passcode, first_name, last_name) 
                                VALUES (:username, :passcode, :first_name, :last_name)");
         $stmt->execute([
             ':username' => $userName,
-            ':passcode' => $passwordHash,
+            ':passcode' => $password,
             ':first_name' => $firstName,
             ':last_name' => $lastName
         ]);
@@ -90,10 +86,9 @@ try {
         $confirmPassword = $_POST['confirm_password'];
 
         validatePasswords($password, $confirmPassword);
-        $passwordHash = hashPassword($password);
         $profileImage = handleProfileImage($firstName, $lastName, $userName);
 
-        saveUserToDatabase($pdo, $firstName, $lastName, $userName, $passwordHash);
+        saveUserToDatabase($pdo, $firstName, $lastName, $userName, $password);
 
         // Redirect to profile.php
         session_start();

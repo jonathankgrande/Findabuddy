@@ -6,7 +6,6 @@
     <title>Messages</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
 <?php
 $pageHeader = "Messages";
     if (file_exists('../includes/navbar.php')){
@@ -32,7 +31,9 @@ echo "<script>
     const username = '" . htmlspecialchars($_SESSION['username'], ENT_QUOTES) . "';
 </script>";
 ?>
-    <div class="container mx-auto p-6 bg-white shadow-md rounded-lg">
+<body class="bg-gray-100 min-h-screen w-full flex flex-col items-center justify-center">
+
+    <div class="container mx-auto mt-10 w-full bg-white items-center shadow-md rounded-lg">
         <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Messages</h1>
 
         <div id="messages" class="space-y-4 max-h-80 overflow-y-auto border border-gray-300 p-4 rounded-lg bg-gray-50">

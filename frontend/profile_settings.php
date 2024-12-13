@@ -10,47 +10,69 @@
 
     <?php
     $pageHeader = "Settings";
-
     if (file_exists('../includes/navbar.php')) {
         include '../includes/navbar.php';
     } else {
-        echo "<p class='text-red-500 text-center'>Error: File not found.</p>";
+        echo "<p class='text-red-500'>Error: Navbar file not found.</p>";
+    }
+
+    session_start();
+
+    require_once "../classes/dbh.classes.php";
+    require_once "../classes/profileinfo-contr.classes.php";
+
+    if (!isset($_SESSION['userId'])) {
+        header("Location: login.php");
+        exit();
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $userId = $_SESSION['userId'];
+        $profileContr = new ProfileInfoContr($userId);
+
+        $about = $_POST['about'];
+        $title = $_POST['title'];
+        $nickname = $_POST['nickname'];
+        $gender = $_POST['gender'];
+        $age = $_POST['age'];
+        $email = $_POST['email'];
+        $phone = $_POST['phone'];
+        $borough = $_POST['borough'];
+
+        $profileContr->updateProfileInfo($about, $title, $nickname, $gender, $age, $email, $phone, $borough);
+
+        header("Location: profile.php?update=success");
+        exit();
     }
     ?>
 
     <div class="container mx-auto pt-10">
-        <!-- Informational Section -->
         <div class="bg-blue-100 border-l-4 border-blue-500 p-4 rounded-md mb-6">
             <h2 class="text-blue-700 font-bold text-lg">Settings</h2>
             <p class="text-gray-700">
-                Manage your profile and customize your preferences to enhance your experience. 
-                Update your personal information and tell us about yourself! 
-                Keep your details up to date to ensure accurate matches and better connections!
+                Manage your profile and customize your preferences.
             </p>
         </div>
 
-        <!-- Main Content -->
         <main class="w-3/4 bg-white p-6 rounded-lg shadow-md mx-auto">
-            <!-- Profile Information -->
             <div class="bg-gray-100 p-6 rounded-lg shadow-md">
                 <h3 class="text-lg font-bold text-blue-800 mb-4">Edit Your Profile</h3>
-                <form action="profile.php" method="post" class="space-y-4">
-                    <!-- Title -->
+                <form action="" method="post" class="space-y-4">
+                    <div>
+                        <label for="about" class="block text-sm font-medium text-gray-800">About:</label>
+                        <textarea id="about" name="about" class="w-full p-3 border border-gray-300 rounded-lg"></textarea>
+                    </div>
                     <div>
                         <label for="title" class="block text-sm font-medium text-gray-800">Title:</label>
-                        <input type="text" id="title" name="title" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="title" name="title" class="w-full p-3 border border-gray-300 rounded-lg">
                     </div>
-
-                    <!-- Nickname -->
                     <div>
                         <label for="nickname" class="block text-sm font-medium text-gray-800">Nickname:</label>
-                        <input type="text" id="nickname" name="nickname" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="nickname" name="nickname" class="w-full p-3 border border-gray-300 rounded-lg">
                     </div>
-
-                    <!-- Gender -->
                     <div>
                         <label for="gender" class="block text-sm font-medium text-gray-800">Gender:</label>
-                        <select id="gender" name="gender" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <select id="gender" name="gender" class="w-full p-3 border border-gray-300 rounded-lg">
                             <option value="">Select Gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
@@ -58,36 +80,24 @@
                             <option value="prefer_not_to_say">Prefer not to say</option>
                         </select>
                     </div>
-
-                    <!-- Age -->
                     <div>
                         <label for="age" class="block text-sm font-medium text-gray-800">Age:</label>
-                        <input type="number" id="age" name="age" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="number" id="age" name="age" class="w-full p-3 border border-gray-300 rounded-lg">
                     </div>
-
-                    <!-- Email -->
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-800">Email:</label>
-                        <input type="email" id="email" name="email" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="email" id="email" name="email" class="w-full p-3 border border-gray-300 rounded-lg">
                     </div>
-
-                    <!-- Phone Number -->
                     <div>
                         <label for="phone" class="block text-sm font-medium text-gray-800">Phone Number:</label>
-                        <input type="tel" id="phone" name="phone" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="tel" id="phone" name="phone" class="w-full p-3 border border-gray-300 rounded-lg">
                     </div>
-
-                    <!-- Borough -->
                     <div>
                         <label for="borough" class="block text-sm font-medium text-gray-800">Borough:</label>
-                        <input type="text" id="borough" name="borough" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="borough" name="borough" class="w-full p-3 border border-gray-300 rounded-lg">
                     </div>
-
-                    <!-- Submit Button -->
                     <div>
-                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            Save Changes
-                        </button>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg">Save Changes</button>
                     </div>
                 </form>
             </div>

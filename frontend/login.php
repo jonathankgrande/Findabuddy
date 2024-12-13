@@ -75,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
 
         <div class="mt-4 text-center">
-            <p class="text-sm text-gray-600">Don't have an account? <a href="" class="text-blue-500">Register here</a></p>
+            <p class="text-sm text-gray-600">Don't have an account? <a href="user_profile.html" class="text-blue-500">Register here</a></p>
         </div>
     </div>
 </body>

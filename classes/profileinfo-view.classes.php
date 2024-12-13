@@ -1,12 +1,12 @@
 <?php
 
 class ProfileInfoView extends ProfileInfo {
-    
+
     // Fetch and display the 'About' section
     public function displayAbout($userId) {
         $profileInfo = $this->getProfileInfo($userId);
         if (!empty($profileInfo)) {
-            echo htmlspecialchars($profileInfo[0]["alt_about"]);
+            echo htmlspecialchars($profileInfo["about"]);
         } else {
             echo "No profile information available.";
         }
@@ -16,7 +16,7 @@ class ProfileInfoView extends ProfileInfo {
     public function displayTitle($userId) {
         $profileInfo = $this->getProfileInfo($userId);
         if (!empty($profileInfo)) {
-            echo htmlspecialchars($profileInfo[0]["alt_introtitle"]);
+            echo htmlspecialchars($profileInfo["title"]);
         } else {
             echo "No title available.";
         }
@@ -26,7 +26,7 @@ class ProfileInfoView extends ProfileInfo {
     public function displayNickName($userId) {
         $profileInfo = $this->getProfileInfo($userId);
         if (!empty($profileInfo)) {
-            echo htmlspecialchars($profileInfo[0]["nick_name"]);
+            echo htmlspecialchars($profileInfo["nick_name"]);
         } else {
             echo "No nickname available.";
         }
@@ -36,7 +36,7 @@ class ProfileInfoView extends ProfileInfo {
     public function displayGender($userId) {
         $profileInfo = $this->getProfileInfo($userId);
         if (!empty($profileInfo)) {
-            echo htmlspecialchars($profileInfo[0]["gender"]);
+            echo htmlspecialchars($profileInfo["gender"]);
         } else {
             echo "No gender information available.";
         }
@@ -46,7 +46,7 @@ class ProfileInfoView extends ProfileInfo {
     public function displayAge($userId) {
         $profileInfo = $this->getProfileInfo($userId);
         if (!empty($profileInfo)) {
-            echo htmlspecialchars($profileInfo[0]["age"]);
+            echo htmlspecialchars($profileInfo["age"]);
         } else {
             echo "No age information available.";
         }
@@ -56,7 +56,7 @@ class ProfileInfoView extends ProfileInfo {
     public function displayEmail($userId) {
         $profileInfo = $this->getProfileInfo($userId);
         if (!empty($profileInfo)) {
-            echo htmlspecialchars($profileInfo[0]["email"]);
+            echo htmlspecialchars($profileInfo["email"]);
         } else {
             echo "No email information available.";
         }
@@ -66,7 +66,7 @@ class ProfileInfoView extends ProfileInfo {
     public function displayNumber($userId) {
         $profileInfo = $this->getProfileInfo($userId);
         if (!empty($profileInfo)) {
-            echo htmlspecialchars($profileInfo[0]["phone_number"]);
+            echo htmlspecialchars($profileInfo["phone_number"]);
         } else {
             echo "No phone number available.";
         }
@@ -76,9 +76,13 @@ class ProfileInfoView extends ProfileInfo {
     public function displayAddress($userId) {
         $profileInfo = $this->getProfileInfo($userId);
         if (!empty($profileInfo)) {
-            echo htmlspecialchars($profileInfo[0]["user_address"]);
+            echo htmlspecialchars($profileInfo["user_address"]);
         } else {
             echo "No address available.";
         }
+    }
+
+    public function fetchProfileInfo($userId) {
+        return $this->getProfileInfo($userId);
     }
 }

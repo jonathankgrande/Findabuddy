@@ -12,14 +12,14 @@ require_once "../classes/profileinfo.classes.php";       // ProfileInfo base cla
 require_once "../classes/profileinfo-view.classes.php";  // ProfileInfoView class
 
 // Ensure the user is logged in
-if (!isset($_SESSION['userId'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: login.php"); // Redirect to login page if not logged in
     exit();
 }
 
 // Instantiate the ProfileInfoView class
 $profileInfo = new ProfileInfoView();
-$userData = $profileInfo->getProfileInfo($_SESSION['userId']); // Fetch user data
+$userData = $profileInfo->fetchProfileInfo($_SESSION['user_id']); // Fetch user data
 ?>
 
 <!DOCTYPE html>
@@ -39,9 +39,6 @@ if (file_exists('../includes/navbar.php')) {
 } else {
     echo "<p class='text-red-500'>Error: Navbar file not found.</p>";
 }
-
-$profileInfo = new ProfileInfoView();
-$userData = $profileInfo->fetchProfileInfo($_SESSION['userId']); // Fetch user data
 ?>
 
 <div class="container mx-auto pt-10">
@@ -59,6 +56,5 @@ $userData = $profileInfo->fetchProfileInfo($_SESSION['userId']); // Fetch user d
         </ul>
     </div>
 </div>
-
 </body>
 </html>

@@ -19,42 +19,32 @@ class ProfileInfo extends Dbh {
         }
     }
 
-    // Update profile information for a user
-    protected function setNewProfileInfo($about, $title, $nickName, $gender, $age, $email, $phoneNumber, $userAddress, $userId) {
+    // Upsert profile information (Insert or Update if exists)
+    protected function upsertProfileInfo($about, $title, $nickName, $gender, $age, $email, $phoneNumber, $userAddress, $userId) {
         try {
             $stmt = $this->connect()->prepare(
-                'UPDATE athletes 
-                 SET about = ?, title = ?, nick_name = ?, gender = ?, age = ?, email = ?, phone_number = ?, user_address = ? 
-                 WHERE user_id = ?;'
+                'INSERT INTO athletes (user_id, about, title, nick_name, gender, age, email, phone_number, user_address) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 ON DUPLICATE KEY UPDATE 
+                 about = VALUES(about),
+                 title = VALUES(title),
+                 nick_name = VALUES(nick_name),
+                 gender = VALUES(gender),
+                 age = VALUES(age),
+                 email = VALUES(email),
+                 phone_number = VALUES(phone_number),
+                 user_address = VALUES(user_address);'
             );
 
-            if (!$stmt->execute([$about, $title, $nickName, $gender, $age, $email, $phoneNumber, $userAddress, $userId])) {
-                throw new Exception("Failed to update profile for user ID: $userId");
+            if (!$stmt->execute([$userId, $about, $title, $nickName, $gender, $age, $email, $phoneNumber, $userAddress])) {
+                throw new Exception("Failed to upsert profile for user ID: $userId");
             }
 
             return true;
         } catch (Exception $e) {
-            error_log("Error in setNewProfileInfo: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    // Insert new profile information (optional, if needed)
-    protected function setProfileInfo($about, $title, $nickName, $gender, $age, $email, $phoneNumber, $userAddress, $userId) {
-        try {
-            $stmt = $this->connect()->prepare(
-                'INSERT INTO athletes (about, title, nick_name, gender, age, email, phone_number, user_address, user_id) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);'
-            );
-
-            if (!$stmt->execute([$about, $title, $nickName, $gender, $age, $email, $phoneNumber, $userAddress, $userId])) {
-                throw new Exception("Failed to insert profile for user ID: $userId");
-            }
-
-            return true;
-        } catch (Exception $e) {
-            error_log("Error in setProfileInfo: " . $e->getMessage());
+            error_log("Error in upsertProfileInfo: " . $e->getMessage());
             return false;
         }
     }
 }
+

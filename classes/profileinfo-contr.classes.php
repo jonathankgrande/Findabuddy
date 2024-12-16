@@ -1,4 +1,5 @@
 <?php
+require_once "profileinfo.classes.php"; // Add this to load ProfileInfo before using it
 
 class ProfileInfoContr extends ProfileInfo {
     private $userId;
@@ -8,7 +9,7 @@ class ProfileInfoContr extends ProfileInfo {
         $this->userId = $userId;
     }
 
-    // Update profile information
+    // Update or insert profile information
     public function updateProfileInfo($about, $title, $nickName, $gender, $age, $email, $phoneNumber, $userAddress) {
         // Error handlers
         if ($this->emptyInputCheck($about, $title, $nickName, $gender, $age, $email, $phoneNumber, $userAddress)) {
@@ -16,8 +17,8 @@ class ProfileInfoContr extends ProfileInfo {
             exit();
         }
 
-        // Call parent method to update the database
-        $this->setNewProfileInfo($this->userId, $about, $title, $nickName, $gender, $age, $email, $phoneNumber, $userAddress);
+        // Call the new upsert method
+        $this->upsertProfileInfo($about, $title, $nickName, $gender, $age, $email, $phoneNumber, $userAddress, $this->userId);
     }
 
     // Check for empty input

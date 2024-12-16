@@ -5,12 +5,9 @@ class ProfileInfoView extends ProfileInfo {
     // Fetch and display the 'About' section
     public function displayAbout($userId) {
         $profileInfo = $this->getProfileInfo($userId);
-        if (!empty($profileInfo)) {
-            echo htmlspecialchars($profileInfo["about"]);
-        } else {
-            echo "No profile information available.";
+        
+            echo $profileInfo[0]["about"];
         }
-    }
 
     // Fetch and display the title
     public function displayTitle($userId) {

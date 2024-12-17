@@ -62,6 +62,17 @@ if (file_exists('../includes/navbar.php')) {
     echo "<p>Error: Navbar not found.</p>";
 }
 ?>
+<?php
+// Fetch user's profile image
+$profileQuery = "SELECT profile_image FROM user_admin WHERE user_id = :userId LIMIT 1";
+$profileStmt = $conn->prepare($profileQuery);
+$profileStmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+$profileStmt->execute();
+$profileImage = $profileStmt->fetchColumn();
+if (!$profileImage || !file_exists( $profileImage)) {
+    $profileImage = '../uploads/default.png';
+}
+?>
 
 <div class="container mx-auto pt-10">
     <!-- Welcome Section -->
@@ -78,7 +89,9 @@ if (file_exists('../includes/navbar.php')) {
         <!-- Left Sidebar -->
         <div class="w-1/4 bg-white p-4 rounded-lg shadow-md">
             <div class="text-center">
-                <img class="w-24 h-24 mx-auto rounded-full border-4 border-gray-300" src="https://photo.com/150" alt="User Profile Picture">
+            <img class="w-24 h-24 mx-auto rounded-full border-4 border-gray-300" 
+            src="<?php echo htmlspecialchars($profileImage); ?>" 
+            alt="User Profile Picture">
                 <h2 class="text-xl font-semibold mt-4"><?php echo htmlspecialchars($_SESSION['username']); ?></h2>
                 <p class="text-gray-600">Queens, NY</p>
             </div>
@@ -155,6 +168,7 @@ if (file_exists('../includes/navbar.php')) {
     }
     ?>
 </div>
+
 
 
 </div>

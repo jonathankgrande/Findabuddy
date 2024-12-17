@@ -64,21 +64,28 @@ function fetchMatches($conn) {
       $result = $stmt->get_result();
 
       // Output the results
-      if ($result && $result->num_rows > 0) {
-          $results .= "<table border='1' align='center' cellpadding='10' cellspacing='0'>";
-          $results .= "<tr><th>Day</th><th>Time</th><th>Activity</th><th>User ID</th></tr>";
-          while ($row = $result->fetch_assoc()) {
-              $results .= "<tr>
-                              <td>" . htmlspecialchars($row['workout_date']) . "</td>
-                              <td>" . htmlspecialchars($row['workout_time']) . "</td>
-                              <td>" . htmlspecialchars($row['activity']) . "</td>
-                              <td>" . htmlspecialchars($row['user_id']) . "</td>
-                           </tr>";
-          }
-          $results .= "</table>";
-      } else {
-          $results = "<p style='color: blue; text-align: center;'>No matches found for the selected criteria.</p>";
-      }
+if ($result && $result->num_rows > 0) {
+    $results .= "<table border='1' align='center' cellpadding='10' cellspacing='0'>";
+    $results .= "<tr><th>Day</th><th>Time</th><th>Activity</th><th>User ID</th><th>Action</th></tr>";
+    while ($row = $result->fetch_assoc()) {
+        $userId = htmlspecialchars($row['user_id']);
+        $day = htmlspecialchars($row['workout_date']);
+        $timeVal = htmlspecialchars($row['workout_time']);
+        $activity = htmlspecialchars($row['activity']);
+
+        $results .= "<tr>
+                        <td>$day</td>
+                        <td>$timeVal</td>
+                        <td>$activity</td>
+                        <td>$userId</td>
+                        <td><a href='../pages/messages.php?recipient=$userId' style='color:blue;'>Message</a></td>
+                     </tr>";
+    }
+    $results .= "</table>";
+} else {
+    $results = "<p style='color: blue; text-align: center;'>No matches found for the selected criteria.</p>";
+}
+
   } else {
       $results = "<p style='color: red; text-align: center;'>Query failed: " . $stmt->error . "</p>";
   }

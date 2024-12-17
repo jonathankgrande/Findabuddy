@@ -22,10 +22,10 @@ if (session_status() === PHP_SESSION_NONE) {
                 <li><a href="homepage.php" class="text-gray-800 hover:text-blue-500">Homepage</a></li>
                 <li><a href="find_a_buddy.php" class="text-gray-800 hover:text-blue-500">Find-A-Buddy</a></li>
                 <li><a href="messages.php" class="text-gray-800 hover:text-blue-500">Messages</a></li>
+                <li><a href="cards.php" class="text-gray-800 hover:text-blue-500">Cards</a></li>
                 <li><a href="my_schedule.php" class="text-gray-800 hover:text-blue-500">My Schedule</a></li>
                 <li><a href="profile.php" class="text-gray-800 hover:text-blue-500">Profile</a></li>
                 <li><a href="profile_settings.php" class="text-gray-800 hover:text-blue-500">Settings</a></li>
-
                 <!-- Display the username if logged in -->
                 <?php if (isset($_SESSION['username'])): ?>
                     <li class="text-blue-800">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></li>

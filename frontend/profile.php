@@ -40,7 +40,15 @@ if (file_exists('../includes/navbar.php')) {
     echo "<p class='text-red-500'>Error: Navbar file not found.</p>";
 }
 ?>
-
+<div class="container mx-auto mt-12">
+        <!-- Informational Section -->
+        <div class="bg-blue-100 border-l-4 border-blue-500 p-4 rounded-md mb-6">
+            <h2 class="text-blue-700 font-bold text-lg">Profile</h2>
+            <p class="text-gray-700">
+            Welcome to your profile page! This is where you can view the personal information that is 
+            visible to other users. Use this page to ensure your details are accurate and up-to-date.
+            </p>
+</div>
 <div class="container mx-auto pt-10">
     <div class="bg-white p-6 rounded-lg shadow-md">
         <h2 class="text-blue-800 text-2xl font-bold">Your Profile</h2>

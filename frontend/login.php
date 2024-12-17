@@ -13,25 +13,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Prevent SQL injection by sanitizing the inputs
+    // Sanitize the inputs to prevent SQL injection
     $username = mysqli_real_escape_string($conn, $username);
-    $password = mysqli_real_escape_string($conn, $password);
 
-    // Query to check if the user exists in the database
-    $query = "SELECT * FROM user_admin WHERE username = '$username' AND passcode = '$password'";
+    // Query to check if the user exists
+    $query = "SELECT * FROM user_admin WHERE username = '$username'";
     $result = mysqli_query($conn, $query);
 
-    // Check if user exists and the password matches
-    if (mysqli_num_rows($result) > 0) {
+    if ($result && mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
 
-        // Store user info in session
-        $_SESSION['user_id'] = $user['user_id'];
-        $_SESSION['username'] = $user['username'];
+        // Verify the hashed password
+        if (password_verify($password, $user['passcode'])) {
+            // Password matches, start a session
+            $_SESSION['user_id'] = $user['user_id'];
+            $_SESSION['username'] = $user['username'];
 
-        // Redirect to messages page (or homepage)
-        header("Location: homepage.php");
-        exit;
+            // Redirect to homepage
+            header("Location: homepage.php");
+            exit;
+        } else {
+            $error_message = "Invalid username or password.";
+        }
     } else {
         $error_message = "Invalid username or password.";
     }

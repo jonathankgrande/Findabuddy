@@ -19,20 +19,53 @@ function validatePasswords($password, $confirmPassword) {
     if ($password !== $confirmPassword) {
         throw new Exception("Passwords do not match.");
     }
+
+    if (strlen($password) < 8) {
+        throw new Exception("Password must be at least 8 characters long.");
+    }
+}
+
+function hashPassword($password) {
+    return password_hash($password, PASSWORD_DEFAULT);
 }
 
 function handleProfileImage($firstName, $lastName, $userName) {
-    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
-        $uploadDir = 'uploads/';
+    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = './uploads/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
-        $profileImage = $uploadDir . basename($_FILES['profile_image']['name']);
-        move_uploaded_file($_FILES['profile_image']['tmp_name'], $profileImage);
-        return $profileImage;
-    } else {
-        return generateDefaultProfileImage($firstName, $lastName, $userName);
+
+        $fileName = preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($_FILES['profile_image']['name']));
+        $filePath = $uploadDir . $fileName;
+
+        // Validate file type
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        if (!in_array(mime_content_type($_FILES['profile_image']['tmp_name']), $allowedTypes)) {
+            throw new Exception("Invalid file type. Only JPEG, PNG, and GIF are allowed.");
+        }
+
+        if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $filePath)) {
+            return $filePath;
+        } else {
+            throw new Exception("Failed to move uploaded file to target directory.");
+        }
+    } elseif (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $errorMessages = [
+            UPLOAD_ERR_INI_SIZE => "The uploaded file exceeds the upload_max_filesize directive.",
+            UPLOAD_ERR_FORM_SIZE => "The uploaded file exceeds the MAX_FILE_SIZE directive.",
+            UPLOAD_ERR_PARTIAL => "The uploaded file was only partially uploaded.",
+            UPLOAD_ERR_NO_TMP_DIR => "Missing a temporary folder.",
+            UPLOAD_ERR_CANT_WRITE => "Failed to write file to disk.",
+            UPLOAD_ERR_EXTENSION => "A PHP extension stopped the file upload."
+        ];
+        $errorCode = $_FILES['profile_image']['error'];
+        $errorMessage = $errorMessages[$errorCode] ?? "Unknown upload error.";
+        throw new Exception("Error uploading profile image: " . $errorMessage);
     }
+
+    // Generate default profile image if no file is uploaded
+    return generateDefaultProfileImage($firstName, $lastName, $userName);
 }
 
 function generateDefaultProfileImage($firstName, $lastName, $userName) {
@@ -59,15 +92,16 @@ function generateDefaultProfileImage($firstName, $lastName, $userName) {
     return $profileImage;
 }
 
-function saveUserToDatabase($pdo, $firstName, $lastName, $userName, $password) {
+function saveUserToDatabase($pdo, $firstName, $lastName, $userName, $hashedPassword, $profileImage) {
     try {
-        $stmt = $pdo->prepare("INSERT INTO user_admin (username, passcode, first_name, last_name) 
-                               VALUES (:username, :passcode, :first_name, :last_name)");
+        $stmt = $pdo->prepare("INSERT INTO user_admin (username, passcode, first_name, last_name, profile_image) 
+                               VALUES (:username, :passcode, :first_name, :last_name, :profile_image)");
         $stmt->execute([
             ':username' => $userName,
-            ':passcode' => $password,
+            ':passcode' => $hashedPassword,
             ':first_name' => $firstName,
-            ':last_name' => $lastName
+            ':last_name' => $lastName,
+            ':profile_image' => $profileImage
         ]);
     } catch (PDOException $e) {
         throw new Exception("Error saving data: " . $e->getMessage());
@@ -86,13 +120,13 @@ try {
         $confirmPassword = $_POST['confirm_password'];
 
         validatePasswords($password, $confirmPassword);
+        $hashedPassword = hashPassword($password);
         $profileImage = handleProfileImage($firstName, $lastName, $userName);
 
-        saveUserToDatabase($pdo, $firstName, $lastName, $userName, $password);
+        saveUserToDatabase($pdo, $firstName, $lastName, $userName, $hashedPassword, $profileImage);
 
-        // Redirect to profile.php
         session_start();
-        $_SESSION['userId'] = $userName; // Store user ID in session
+        $_SESSION['userId'] = $userName;
         header("Location: ../frontend/homepage.php");
         exit();
     }

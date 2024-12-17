@@ -97,8 +97,7 @@ $weekdays = [
         <div class="bg-blue-100 border-l-4 border-blue-500 p-4 rounded-md mb-6">
             <h2 class="text-blue-700 font-bold text-lg">Set Your Availability</h2>
             <p class="text-gray-700">
-                Use this schedule to set your workout availability. 
-                This will help others find you based on your preferred times, days, and activities.
+            Plan your active lifestyle with My Schedule! Easily input your preferred times to run, bike, or walk and create multiple entries that suit your routine. Looking for company? Your schedule is visible to other users who share similar interests and time slots, making it easier than ever to connect with others who want to run, bike, or walk at the same time. Stay active, stay social, and make every session count!
             </p>
         </div>
 

@@ -6,22 +6,25 @@
     <title>Messages</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gray-100 min-h-screen w-full flex flex-col">
+
 <?php
 $pageHeader = "Messages";
-    if (file_exists('../includes/navbar.php')){
-        include '../includes/navbar.php';
-        } else {
-            echo "<p class='text-red-500'>Error: File not found.</p>";
-        }
-?>
-<?php
+if (file_exists('../includes/navbar.php')) {
+    include '../includes/navbar.php';
+} else {
+    echo "<p class='text-red-500'>Error: Navbar file not found.</p>";
+}
+
+
+// Start session
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Ensure the user is logged in
+// Redirect to login if user is not logged in
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
-    header('Location: login.php'); // Redirect to login if not logged in
+    header('Location: login.php');
     exit;
 }
 
@@ -31,113 +34,110 @@ echo "<script>
     const username = '" . htmlspecialchars($_SESSION['username'], ENT_QUOTES) . "';
 </script>";
 ?>
-<body class="bg-gray-100 min-h-screen w-full flex flex-col items-center justify-center">
+ <div class="container mx-auto mt-12">
+        <!-- Informational Section -->
+        <div class="bg-blue-100 border-l-4 border-blue-500 p-4 rounded-md mb-6">
+            <h2 class="text-blue-700 font-bold text-lg">DM</h2>
+            <p class="text-gray-700">
+            The Direct Message feature lets you connect directly with runners and exercise buddies found through the Find-A-Buddy tool or Matching Widget. Plan workouts, coordinate schedules, and stay connected with your fitness partners in private, organized chats.            </p>
+ </div>
 
-    <div class="container mx-auto mt-10 w-full bg-white items-center shadow-md rounded-lg">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Messages</h1>
+<div class="container mx-auto mt-10 w-full bg-white shadow-md rounded-lg">
 
-        <div id="messages" class="space-y-4 max-h-80 overflow-y-auto border border-gray-300 p-4 rounded-lg bg-gray-50">
-            <!-- Messages will be displayed here -->
-        </div>
-
-        <div class="mt-6">
-            <label for="receiverSelect" class="block text-sm font-medium text-gray-700">Message send to:</label>
-            <select id="receiverSelect" class="mt-2 block w-full px-4 py-2 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <!-- Dropdown options will be populated by JavaScript -->
-            </select>
-        </div>
-
-        <textarea id="messageContent" placeholder="Type your message..." rows="4" 
-            class="mt-4 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
-        
-        <button id="sendMessage" 
-            class="mt-4 w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-            Send
-        </button>
-
-        <div id="messageBox" class="mt-4 text-center"></div>
+    <!-- Messages Threads Container -->
+    <div id="messages" class="space-y-4 max-h-96 overflow-y-auto p-4">
+        <!-- Chat threads will be dynamically populated -->
     </div>
 
-    <script>
-        // Ensure the user is logged in
-        // senderId and username are passed from PHP
-        if (!senderId) {
-            window.location.href = 'login.php'; // Redirect to login page
-        }
+    <!-- Message Input Section -->
+    <div class="p-4 border-t border-gray-200">
+        <textarea id="messageContent" placeholder="Type your message..." rows="3"
+            class="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
 
-        // Fetch and display users for the 'Send to' dropdown
-        function fetchUsers() {
-            fetch('../backend/fetch_users.php')
-                .then(response => response.json())
-                .then(users => {
-                    const select = document.getElementById('receiverSelect');
-                    select.innerHTML = '';
-                    users.forEach(user => {
-                        const option = document.createElement('option');
-                        option.value = user.user_id;
-                        option.textContent = user.username;
-                        select.appendChild(option);
-                    });
-                });
-        }
+        <button id="sendMessage"
+            class="mt-2 w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none">
+            Send Message
+        </button>
 
-        // Fetch and display messages from the database
-        function fetchMessages() {
-            fetch('../backend/fetch_messages.php')
-                .then(response => response.json())
-                .then(messages => {
-                    const messagesDiv = document.getElementById('messages');
-                    messagesDiv.innerHTML = ''; // Clear any previous messages
+        <div id="messageBox" class="mt-2 text-center"></div>
+    </div>
+</div>
 
-                    messages.forEach(msg => {
-                        const messageElement = document.createElement('div');
-                        messageElement.className = 'p-3 rounded-lg shadow-sm bg-blue-50 border border-blue-200';
+<script>
+// Fetch and display messages grouped by users
+function fetchMessages() {
+    fetch('../backend/fetch_messages.php')
+        .then(response => response.json())
+        .then(data => {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = ''; // Clear previous messages
 
-                        // Display the message content with the sender's or receiver's username
-                        if (msg.sender_username === localStorage.getItem('username')) {
-                            messageElement.textContent = `You: ${msg.content}`; // Sender message
-                            messageElement.className += ' text-right bg-green-100';
-                        } else {
-                            messageElement.textContent = `${msg.sender_username}: ${msg.content}`; // Receiver message
-                        }
+            // Group messages by other_user_id
+            for (const userId in data) {
+                const user = data[userId];
 
-                        messagesDiv.appendChild(messageElement);
-                    });
-                });
-        }
+                // Create a collapsible chat block
+                const threadDiv = document.createElement('div');
+                threadDiv.className = 'border border-gray-300 rounded-lg shadow-md';
 
-        // Send a new message
-        document.getElementById('sendMessage').addEventListener('click', () => {
-            const content = document.getElementById('messageContent').value;
-            const receiverId = document.getElementById('receiverSelect').value;
-            if (!content.trim() || !receiverId) return;
-
-            fetch('../backend/send_message.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sender_id: senderId, receiver_id: receiverId, content }),
-            })
-            .then(response => response.json())
-            .then(result => {
-                const messageBox = document.getElementById('messageBox');
-                if (result.success) {
-                    // Display success message
-                    messageBox.innerHTML = `<p class="text-green-500">${result.message}</p>`;
-                    fetchMessages(); // Refresh the messages
-                    document.getElementById('messageContent').value = ''; // Clear the input
-                } else {
-                    // Display error message
-                    messageBox.innerHTML = `<p class="text-red-500">${result.message}</p>`;
-                }
-            });
+                threadDiv.innerHTML = `
+                    <div class="bg-blue-500 text-white p-4 rounded-t-lg flex justify-between items-center">
+                        <h2 class="font-bold">${user.username}</h2>
+                        <button onclick="toggleChat('chat-${userId}')"
+                            class="bg-white text-blue-500 px-3 py-1 rounded hover:bg-gray-200">
+                            Chat
+                        </button>
+                    </div>
+                    <div id="chat-${userId}" class="hidden p-4 bg-gray-50 space-y-2">
+                        ${user.messages.map(msg => `
+                            <div class="${msg.is_sent_by_user ? 'text-right' : 'text-left'}">
+                                <div class="inline-block px-4 py-2 rounded-lg ${msg.is_sent_by_user ? 'bg-green-100' : 'bg-blue-100'}">
+                                    ${msg.content}
+                                </div>
+                                <small class="block text-gray-500">${new Date(msg.timestamp).toLocaleString()}</small>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                messagesDiv.appendChild(threadDiv);
+            }
         });
+}
 
-        // Periodically fetch messages every 5 seconds
-        setInterval(fetchMessages, 5000);
+// Toggle visibility of chat messages
+function toggleChat(chatId) {
+    const chatDiv = document.getElementById(chatId);
+    chatDiv.classList.toggle('hidden');
+}
 
-        // Initialize the page by fetching users and messages
-        fetchUsers();
-        fetchMessages();
-    </script>
+// Send a new message
+document.getElementById('sendMessage').addEventListener('click', () => {
+    const content = document.getElementById('messageContent').value;
+    const receiverId = prompt("Enter the recipient's user ID:");
+
+    if (!content.trim() || !receiverId) return;
+
+    fetch('../backend/send_message.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sender_id: senderId, receiver_id: receiverId, content }),
+    })
+    .then(response => response.json())
+    .then(result => {
+        const messageBox = document.getElementById('messageBox');
+        if (result.success) {
+            messageBox.innerHTML = `<p class="text-green-500">${result.message}</p>`;
+            fetchMessages(); // Refresh the messages
+            document.getElementById('messageContent').value = ''; // Clear input
+        } else {
+            messageBox.innerHTML = `<p class="text-red-500">${result.message}</p>`;
+        }
+    });
+});
+
+// Initialize: fetch messages
+fetchMessages();
+</script>
+
 </body>
 </html>

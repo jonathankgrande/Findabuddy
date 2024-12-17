@@ -120,18 +120,43 @@ if (file_exists('../includes/navbar.php')) {
                 <a href="find_a_buddy.php" class="mt-2 block bg-blue-500 text-white text-center py-2 rounded-lg hover:bg-blue-600">Find Your Buddy</a>
             </div>
 
-            <!-- Clubs Section -->
-            <div class="bg-white p-4 rounded-lg shadow-md">
-                <h3 class="text-lg font-bold text-gray-800">Your Clubs</h3>
-                <div class="mt-4 flex space-x-4">
-                    <img class="w-10 h-10 rounded-md" src="https://via.placeholder.com/40" alt="Club 1">
-                    <img class="w-10 h-10 rounded-md" src="https://via.placeholder.com/40" alt="Club 2">
-                    <img class="w-10 h-10 rounded-md" src="https://via.placeholder.com/40" alt="Club 3">
-                </div>
-                <a href="#" class="mt-4 block text-blue-500 text-sm hover:underline">View All Clubs</a>
-            </div>
-        </aside>
-    </div>
+<!-- Matching Widget Section -->
+<div class="bg-white p-4 rounded-lg shadow-md">
+    <h3 class="text-lg font-bold text-gray-800">Find Matching Buddies</h3>
+    <p class="text-gray-600 mt-2">Users in your borough:</p>
+
+    <?php
+    require_once "../classes/BuddyMatcher.php";
+
+    if (isset($_SESSION['user_id'])) {
+        $matcher = new BuddyMatcher();
+        $matches = $matcher->getMatchingBuddiesByBorough($_SESSION['user_id']);
+
+        if (!empty($matches)) {
+            echo "<ul class='mt-4 space-y-2'>";
+            foreach ($matches as $buddy) {
+                $receiverId = urlencode($buddy['user_id']);
+                echo "
+                    <li class='border-b pb-2'>
+                        <span class='font-semibold'>" . htmlspecialchars($buddy['nick_name']) . "</span>
+                        <span class='text-gray-500 text-sm'>(" . htmlspecialchars($buddy['age']) . " yrs)</span><br>
+                        <a href='messages.php?receiver_id={$receiverId}' 
+                           class='bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm'>
+                           Message
+                        </a>
+                    </li>";
+            }
+            echo "</ul>";
+        } else {
+            echo "<p class='text-gray-600 mt-4'>No matching buddies found in your borough.</p>";
+        }
+    } else {
+        echo "<p class='text-red-500'>Please log in to find buddies.</p>";
+    }
+    ?>
+</div>
+
+
 </div>
 </body>
 </html>

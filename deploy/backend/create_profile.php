@@ -11,7 +11,8 @@ function connectToDatabase($host, $dbname, $username, $password) {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $pdo;
     } catch (PDOException $e) {
-        die("Database connection failed: " . $e->getMessage());
+        error_log("Database connection failed: " . $e->getMessage());
+        throw new Exception("Could not connect to the database. Please try again later.");
     }
 }
 
@@ -19,7 +20,6 @@ function validatePasswords($password, $confirmPassword) {
     if ($password !== $confirmPassword) {
         throw new Exception("Passwords do not match.");
     }
-
     if (strlen($password) < 8) {
         throw new Exception("Password must be at least 8 characters long.");
     }
@@ -31,40 +31,32 @@ function hashPassword($password) {
 
 function handleProfileImage($firstName, $lastName, $userName) {
     if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = './uploads/';
+        $uploadDir = '../uploads/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
 
-        $fileName = preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($_FILES['profile_image']['name']));
+        $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($_FILES['profile_image']['name']));
         $filePath = $uploadDir . $fileName;
 
-        // Validate file type
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        if (!in_array(mime_content_type($_FILES['profile_image']['tmp_name']), $allowedTypes)) {
+        $fileType = mime_content_type($_FILES['profile_image']['tmp_name']);
+
+        if (!in_array($fileType, $allowedTypes)) {
             throw new Exception("Invalid file type. Only JPEG, PNG, and GIF are allowed.");
         }
-
-        if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $filePath)) {
-            return $filePath;
-        } else {
+        if ($_FILES['profile_image']['size'] > 5 * 1024 * 1024) {
+            throw new Exception("File size exceeds the maximum limit of 5MB.");
+        }
+        if (!move_uploaded_file($_FILES['profile_image']['tmp_name'], $filePath)) {
             throw new Exception("Failed to move uploaded file to target directory.");
         }
+
+        return $filePath;
     } elseif (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] !== UPLOAD_ERR_NO_FILE) {
-        $errorMessages = [
-            UPLOAD_ERR_INI_SIZE => "The uploaded file exceeds the upload_max_filesize directive.",
-            UPLOAD_ERR_FORM_SIZE => "The uploaded file exceeds the MAX_FILE_SIZE directive.",
-            UPLOAD_ERR_PARTIAL => "The uploaded file was only partially uploaded.",
-            UPLOAD_ERR_NO_TMP_DIR => "Missing a temporary folder.",
-            UPLOAD_ERR_CANT_WRITE => "Failed to write file to disk.",
-            UPLOAD_ERR_EXTENSION => "A PHP extension stopped the file upload."
-        ];
-        $errorCode = $_FILES['profile_image']['error'];
-        $errorMessage = $errorMessages[$errorCode] ?? "Unknown upload error.";
-        throw new Exception("Error uploading profile image: " . $errorMessage);
+        throw new Exception("Error uploading profile image.");
     }
 
-    // Generate default profile image if no file is uploaded
     return generateDefaultProfileImage($firstName, $lastName, $userName);
 }
 
@@ -73,23 +65,20 @@ function generateDefaultProfileImage($firstName, $lastName, $userName) {
     $bgColor = sprintf("#%06X", mt_rand(0, 0xFFFFFF));
 
     $image = imagecreate(200, 200);
-    $backgroundColor = sscanf($bgColor, "#%02x%02x%02x");
-    $bgColor = imagecolorallocate($image, $backgroundColor[0], $backgroundColor[1], $backgroundColor[2]);
+    $rgb = sscanf($bgColor, "#%02x%02x%02x");
+    $bgColor = imagecolorallocate($image, $rgb[0], $rgb[1], $rgb[2]);
     $textColor = imagecolorallocate($image, 255, 255, 255);
     $fontSize = 5;
-    $textWidth = imagefontwidth($fontSize) * strlen($initials);
-    $textHeight = imagefontheight($fontSize);
-
-    $x = (imagesx($image) - $textWidth) / 2;
-    $y = (imagesy($image) - $textHeight) / 2;
+    $x = (200 - imagefontwidth($fontSize) * strlen($initials)) / 2;
+    $y = (200 - imagefontheight($fontSize)) / 2;
 
     imagestring($image, $fontSize, $x, $y, $initials, $textColor);
 
-    $profileImage = "uploads/" . $userName . "_default.png";
-    imagepng($image, $profileImage);
+    $filePath = "../uploads/{$userName}_default.png";
+    imagepng($image, $filePath);
     imagedestroy($image);
 
-    return $profileImage;
+    return $filePath;
 }
 
 function saveUserToDatabase($pdo, $firstName, $lastName, $userName, $hashedPassword, $profileImage) {
@@ -104,7 +93,8 @@ function saveUserToDatabase($pdo, $firstName, $lastName, $userName, $hashedPassw
             ':profile_image' => $profileImage
         ]);
     } catch (PDOException $e) {
-        throw new Exception("Error saving data: " . $e->getMessage());
+        error_log("Error saving user to database: " . $e->getMessage());
+        throw new Exception("An error occurred while saving your data. Please try again.");
     }
 }
 
@@ -112,7 +102,7 @@ function saveUserToDatabase($pdo, $firstName, $lastName, $userName, $hashedPassw
 try {
     $pdo = connectToDatabase($host, $dbname, $username, $password);
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $firstName = htmlspecialchars($_POST['first_name']);
         $lastName = htmlspecialchars($_POST['last_name']);
         $userName = htmlspecialchars($_POST['username']);
@@ -131,6 +121,6 @@ try {
         exit();
     }
 } catch (Exception $e) {
-    echo "<p>Error: " . $e->getMessage() . "</p>";
+    echo "<p>Error: " . htmlspecialchars($e->getMessage()) . "</p>";
 }
 ?>

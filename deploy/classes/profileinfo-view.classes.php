@@ -1,5 +1,5 @@
 <?php
-
+require_once "profileinfo.classes.php";
 class ProfileInfoView extends ProfileInfo {
 
     // Fetch and display the 'About' section

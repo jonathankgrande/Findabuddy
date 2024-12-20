@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,6 +25,8 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
 
 // Include the database connection class
 require_once "../classes/dbh.classes.php";
+require_once "../classes/profileinfo-view.classes.php";
+
 
 // Initialize database connection
 $dbh = new Dbh();
@@ -33,6 +34,9 @@ $conn = $dbh->connect();
 
 // Fetch user's schedule using PDO
 $userId = $_SESSION['user_id'];
+// Initialize ProfileInfoView to retrieve and display the user's borough and other profile information on the homepage.
+$profileView = new ProfileInfoView();
+
 $query = "SELECT workout_date, workout_time, activity 
           FROM workout 
           WHERE user_id = :userId 
@@ -93,7 +97,7 @@ if (!$profileImage || !file_exists( $profileImage)) {
             src="<?php echo htmlspecialchars($profileImage); ?>" 
             alt="User Profile Picture">
                 <h2 class="text-xl font-semibold mt-4"><?php echo htmlspecialchars($_SESSION['username']); ?></h2>
-                <p class="text-gray-600">Queens, NY</p>
+                <p class="text-gray-600"><?php $profileView->displayAddress($userId); ?></p>
             </div>
         </div>
 

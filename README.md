@@ -69,7 +69,7 @@ To set up and run this app locally, follow these steps:
 
 ## Usage
 
-- **Create an Account:** Start at the `index.html` page to create a profile, 'index.html' is available in the front end folder.
+- **Create an Account:** Start at the `index.html` page to create a profile, `index.html` is available in the front end folder.
 - **Manage Your Schedule:** Add days and times you’re available to work out.
 - **Search for Partners:** Use the search functionality to find partners based on location and availability.
 - **Connect and Match:** Use the messaging feature to connect with workout partners.

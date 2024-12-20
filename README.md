@@ -15,10 +15,10 @@ Find-A-Buddy aims to promote a fitness community by:
 
 ## Key Features
 
-- **Schedule Management:** Users can set their availability (days and times) and share it with others.
-- **Search Functionality:** Filter workout partners by day, time, and activity type.
-- **Matching Feature:** Connect with users in your borough or send messages directly.
-- **Personalized Profiles:** Custom profiles allow users to specify fitness preferences and improve matching accuracy.
+- **Schedule Management:** Users can set their availability (days and times) and share it with others. Make several schedules! Other users will be able to find you through your availability through the use of our search function. Your schedule will also be updated on the homepage.
+- **Search Functionality:** Filter workout partners by day, time, and activity type. Match and message these workout partners with our messaging feature.
+- **Matching Feature:** This homepage widget will connect you with users in your borough and you will be able to send messages directly.
+- **Personalized Profiles:** Custom profiles allow users to talk about themselves and their interests and improve matching accuracy when they enter their borough.
 - **Interactive Profile Cards:** Displays users you've interacted with, along with their details and messaging options.
 
 ---
@@ -74,4 +74,16 @@ To set up and run this app locally, follow these steps:
 - **Search for Partners:** Use the search functionality to find partners based on location and availability.
 - **Connect and Match:** Use the messaging feature to connect with workout partners.
 - **View Profiles:** Use the cards feature to view information about the people you've matched with.
+
+## Notes
+
+  Index Page:
+- The image upload feature was removed from the index.php page due to persistent issues with handling file uploads during account creation.
+- This decision was made to maintain functionality while debugging the problem.
+
+Profile Settings:
+- The image upload feature remains available on the profile_settings.php page.
+- Users can upload or update their profile images after account creation.
+- Users cannot use an email that has been used before, there will not be an update in the Profile page if you do use the same email you've used to create another account.
+
 

@@ -1,5 +1,6 @@
 <?php
 require_once "profileinfo.classes.php"; // Load ProfileInfo before using it
+require_once "profileinfo-view.classes.php"; // Load ProfileInfo before using it
 
 class ProfileInfoContr extends ProfileInfo {
     private $userId;

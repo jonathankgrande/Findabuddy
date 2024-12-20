@@ -29,68 +29,15 @@ function hashPassword($password) {
     return password_hash($password, PASSWORD_DEFAULT);
 }
 
-function handleProfileImage($firstName, $lastName, $userName) {
-    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = '../uploads/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-
-        $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($_FILES['profile_image']['name']));
-        $filePath = $uploadDir . $fileName;
-
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        $fileType = mime_content_type($_FILES['profile_image']['tmp_name']);
-
-        if (!in_array($fileType, $allowedTypes)) {
-            throw new Exception("Invalid file type. Only JPEG, PNG, and GIF are allowed.");
-        }
-        if ($_FILES['profile_image']['size'] > 5 * 1024 * 1024) {
-            throw new Exception("File size exceeds the maximum limit of 5MB.");
-        }
-        if (!move_uploaded_file($_FILES['profile_image']['tmp_name'], $filePath)) {
-            throw new Exception("Failed to move uploaded file to target directory.");
-        }
-
-        return $filePath;
-    } elseif (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] !== UPLOAD_ERR_NO_FILE) {
-        throw new Exception("Error uploading profile image.");
-    }
-
-    return generateDefaultProfileImage($firstName, $lastName, $userName);
-}
-
-function generateDefaultProfileImage($firstName, $lastName, $userName) {
-    $initials = strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
-    $bgColor = sprintf("#%06X", mt_rand(0, 0xFFFFFF));
-
-    $image = imagecreate(200, 200);
-    $rgb = sscanf($bgColor, "#%02x%02x%02x");
-    $bgColor = imagecolorallocate($image, $rgb[0], $rgb[1], $rgb[2]);
-    $textColor = imagecolorallocate($image, 255, 255, 255);
-    $fontSize = 5;
-    $x = (200 - imagefontwidth($fontSize) * strlen($initials)) / 2;
-    $y = (200 - imagefontheight($fontSize)) / 2;
-
-    imagestring($image, $fontSize, $x, $y, $initials, $textColor);
-
-    $filePath = "../uploads/{$userName}_default.png";
-    imagepng($image, $filePath);
-    imagedestroy($image);
-
-    return $filePath;
-}
-
-function saveUserToDatabase($pdo, $firstName, $lastName, $userName, $hashedPassword, $profileImage) {
+function saveUserToDatabase($pdo, $firstName, $lastName, $userName, $hashedPassword) {
     try {
-        $stmt = $pdo->prepare("INSERT INTO user_admin (username, passcode, first_name, last_name, profile_image) 
-                               VALUES (:username, :passcode, :first_name, :last_name, :profile_image)");
+        $stmt = $pdo->prepare("INSERT INTO user_admin (username, passcode, first_name, last_name) 
+                               VALUES (:username, :passcode, :first_name, :last_name)");
         $stmt->execute([
             ':username' => $userName,
             ':passcode' => $hashedPassword,
             ':first_name' => $firstName,
-            ':last_name' => $lastName,
-            ':profile_image' => $profileImage
+            ':last_name' => $lastName
         ]);
     } catch (PDOException $e) {
         error_log("Error saving user to database: " . $e->getMessage());
@@ -111,9 +58,8 @@ try {
 
         validatePasswords($password, $confirmPassword);
         $hashedPassword = hashPassword($password);
-        $profileImage = handleProfileImage($firstName, $lastName, $userName);
 
-        saveUserToDatabase($pdo, $firstName, $lastName, $userName, $hashedPassword, $profileImage);
+        saveUserToDatabase($pdo, $firstName, $lastName, $userName, $hashedPassword);
 
         session_start();
         $_SESSION['userId'] = $userName;
@@ -123,4 +69,3 @@ try {
 } catch (Exception $e) {
     echo "<p>Error: " . htmlspecialchars($e->getMessage()) . "</p>";
 }
-?>
